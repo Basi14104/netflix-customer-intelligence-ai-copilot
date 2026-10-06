@@ -1,0 +1,51 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Local databases
+*.duckdb.wal
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+
+# Private project data
+data/raw/
+data/processed/
+data/analytics/
+
+# Local model artifacts
+models/churn/*.joblib
+models/churn/*.pkl
+
+# Historical/private notebook
+notebooks/01_data_cleaning.ipynb
+
+tests/_copilot_engine_backup.py
+
+# Private data and model artifacts
+data/
+models/churn/
+

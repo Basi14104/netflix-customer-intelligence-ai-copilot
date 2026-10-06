@@ -1,0 +1,9 @@
+question,expected_intent,actual_status,provider,grounding_valid,passed
+What is our overall churn rate?,core_kpis,approved,mock,True,True
+Show me churn by plan,plan_churn,approved,mock,True,True
+What is churn by customer segment?,segment_churn,approved,mock,True,True
+How many payments failed?,payment_metrics,approved,mock,True,True
+How much are customers watching?,engagement_metrics,approved,mock,True,True
+How many support tickets do we have?,support_metrics,approved,mock,True,True
+What is the average customer rating?,feedback_metrics,approved,mock,True,True
+Tell me something about Netflix movies,,unsupported,,,True

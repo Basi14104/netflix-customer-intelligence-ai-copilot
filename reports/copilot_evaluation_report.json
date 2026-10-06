@@ -1,0 +1,75 @@
+{
+  "evaluation_timestamp": "2026-09-21T20:01:49.851344",
+  "phase": "Phase 7 \u2014 Grounded LLM Analytics Copilot",
+  "provider": "mock",
+  "total_cases": 8,
+  "passed_cases": 8,
+  "failed_cases": 0,
+  "pass_rate_pct": 100.0,
+  "results": [
+    {
+      "question": "What is our overall churn rate?",
+      "expected_intent": "core_kpis",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "Show me churn by plan",
+      "expected_intent": "plan_churn",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "What is churn by customer segment?",
+      "expected_intent": "segment_churn",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "How many payments failed?",
+      "expected_intent": "payment_metrics",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "How much are customers watching?",
+      "expected_intent": "engagement_metrics",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "How many support tickets do we have?",
+      "expected_intent": "support_metrics",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "What is the average customer rating?",
+      "expected_intent": "feedback_metrics",
+      "actual_status": "approved",
+      "provider": "mock",
+      "grounding_valid": true,
+      "passed": true
+    },
+    {
+      "question": "Tell me something about Netflix movies",
+      "expected_intent": null,
+      "actual_status": "unsupported",
+      "provider": null,
+      "grounding_valid": null,
+      "passed": true
+    }
+  ]
+}
