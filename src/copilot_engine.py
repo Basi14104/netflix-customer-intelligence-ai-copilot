@@ -235,6 +235,8 @@ ANALYTICS_INTENT_MAP = {
     ],
 
     "plan_churn": [
+        "which plan has the highest churn rate",
+        "which subscription plan has the highest churn rate",
         "churn by plan",
         "plan churn",
         "churn per plan",
