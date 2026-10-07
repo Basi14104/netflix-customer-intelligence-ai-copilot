@@ -269,7 +269,7 @@ The project provides a natural-language interface for asking supported business 
 Example questions:
 
 ```text
-What is the churn rate for Basic customers?
+Which subscription plan has the highest churn rate?
 ```
 
 ```text
