@@ -1,4 +1,4 @@
-﻿"""Public regression tests for the deterministic Netflix analytics copilot."""
+﻿"""Public regression tests for the Netflix analytics copilot."""
 
 from pathlib import Path
 import sys
@@ -15,6 +15,7 @@ if str(SOURCE_PATH) not in sys.path:
     sys.path.insert(0, str(SOURCE_PATH))
 
 import copilot_engine
+import llm_client
 
 
 class PublicCopilotTests(unittest.TestCase):
@@ -211,6 +212,105 @@ class PublicCopilotTests(unittest.TestCase):
             response["calculation_mode"],
             "deterministic_sql",
         )
+
+    # ============================================================
+    # LOCAL LLM TESTS
+    # ============================================================
+
+    def test_llm_mode_uses_local_explanation(self):
+        mock_data = pd.DataFrame(
+            {
+                "historical_churn_rate_pct": [24.89],
+                "customer_count": [8000],
+                "churned_customer_count": [1991],
+            }
+        )
+
+        llm_answer = (
+            "The historical churn rate is 24.89%, meaning "
+            "24.89% of customers were classified as churned."
+        )
+
+        with patch.object(
+            copilot_engine,
+            "execute_analytics",
+            return_value=mock_data,
+        ), patch.object(
+            copilot_engine,
+            "generate_explanation",
+            return_value=llm_answer,
+        ) as mock_llm:
+
+            response = copilot_engine.ask(
+                "What is our overall churn rate?",
+                use_llm=True,
+            )
+
+        self.assertEqual(response["status"], "success")
+        self.assertEqual(response["intent"], "core_kpis")
+        self.assertEqual(response["query_name"], "core_kpis")
+        self.assertEqual(response["answer"], llm_answer)
+
+        mock_llm.assert_called_once()
+
+    def test_llm_receives_verified_deterministic_result(self):
+        mock_data = pd.DataFrame(
+            {
+                "historical_churn_rate_pct": [24.89],
+                "customer_count": [8000],
+                "churned_customer_count": [1991],
+            }
+        )
+
+        with patch.object(
+            copilot_engine,
+            "execute_analytics",
+            return_value=mock_data,
+        ), patch.object(
+            copilot_engine,
+            "generate_explanation",
+            return_value="Verified explanation.",
+        ) as mock_llm:
+
+            response = copilot_engine.ask(
+                "What is our overall churn rate?",
+                use_llm=True,
+            )
+
+        mock_llm.assert_called_once()
+
+        question_arg, verified_result_arg = mock_llm.call_args.args
+
+        self.assertEqual(
+            question_arg,
+            "What is our overall churn rate?",
+        )
+
+        self.assertIn("24.89%", verified_result_arg)
+        self.assertIn("8,000", verified_result_arg)
+        self.assertIn("1,991", verified_result_arg)
+
+        self.assertEqual(
+            response["answer"],
+            "Verified explanation.",
+        )
+
+    def test_llm_failure_falls_back_to_verified_result(self):
+        verified_result = (
+            "The overall churn rate is 24.89%, based on verified analytics."
+        )
+
+        with patch.object(
+            llm_client.urllib.request,
+            "urlopen",
+            side_effect=TimeoutError,
+        ):
+            result = llm_client.generate_explanation(
+                "What is our overall churn rate?",
+                verified_result,
+            )
+
+        self.assertEqual(result, verified_result)
 
 
 if __name__ == "__main__":

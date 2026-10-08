@@ -1,11 +1,12 @@
-
 """
 Netflix Customer Intelligence & AI Analytics Copilot
+
 -----------------------------------------------------
 
 Standalone deterministic analytics engine.
 
 Architecture:
+
     User Question
         ↓
     Intent Resolution
@@ -19,14 +20,19 @@ Architecture:
     Business Answer
 
 Design principle:
+
     DuckDB is the source of truth.
+
     No LLM is required for deterministic analytics.
 """
 
 from pathlib import Path
 import re
+
 import duckdb
 import pandas as pd
+
+from src.llm_client import generate_explanation
 
 
 # ============================================================
@@ -202,8 +208,8 @@ ANALYTICS_QUERY_REGISTRY = {
             ROUND(
                 100.0 * AVG(
                     CASE
-                    WHEN sentiment_label = 'Negative'
-                        THEN 1
+                        WHEN sentiment_label = 'Negative'
+                            THEN 1
                         ELSE 0
                     END
                 ),
@@ -252,6 +258,7 @@ ANALYTICS_INTENT_MAP = {
         "churn by segment",
         "segment churn",
         "customer segment churn",
+        "which customer segment has the highest churn",
         "churn per segment",
         "segments and churn",
     ],
@@ -449,19 +456,29 @@ def format_answer(response):
             f"{int(row['churned_customer_count']):,} are classified "
             f"as churned."
         )
-
     if intent == "plan_churn":
 
-        parts = []
+        plan_names = {
+        "PLAN01": "Basic",
+        "PLAN02": "Standard",
+        "PLAN03": "Premium",
+    }
 
-        for _, row in data.iterrows():
+    parts = []
 
-            parts.append(
-                f"{row['plan_id']}: "
-                f"{row['churn_rate_pct']:.2f}%"
-            )
+    for _, row in data.iterrows():
 
-        return "Historical churn by plan: " + "; ".join(parts) + "."
+        plan_name = plan_names.get(
+            row["plan_id"],
+            row["plan_id"],
+        )
+
+        parts.append(
+            f"{plan_name}: "
+            f"{row['churn_rate_pct']:.2f}%"
+        )
+
+    return "Historical churn by plan: " + "; ".join(parts) + "."
 
     if intent == "segment_churn":
 
@@ -533,15 +550,24 @@ def format_answer(response):
 # COPILOT ENTRY POINT
 # ============================================================
 
-def ask(question):
+def ask(question, use_llm=False):
     """
     Main Netflix Analytics Copilot entry point.
 
     Returns verified deterministic business analytics.
+    Optionally uses the local LLM to explain the verified result.
     """
 
     response = build_response(question)
 
-    response["answer"] = format_answer(response)
+    deterministic_answer = format_answer(response)
+
+    response["answer"] = deterministic_answer
+
+    if use_llm:
+        response["answer"] = generate_explanation(
+            question,
+            deterministic_answer,
+        )
 
     return response
