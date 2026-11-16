@@ -18,7 +18,7 @@ __pycache__/
 # Jupyter checkpoints
 .ipynb_checkpoints/
 
-# Local databases
+# Local database temporary files
 *.duckdb.wal
 
 # OS files
@@ -31,21 +31,19 @@ Desktop.ini
 *.swo
 *~
 
-# Private project data
-data/raw/
-data/processed/
-data/analytics/
+# Data: publish ONLY the synthetic analytics database
+data/*
+!data/analytics/
+data/analytics/*
+!data/analytics/netflix_analytics.duckdb
 
 # Local model artifacts
 models/churn/*.joblib
 models/churn/*.pkl
+models/churn/
 
 # Historical/private notebook
 notebooks/01_data_cleaning.ipynb
 
+# Private test backup
 tests/_copilot_engine_backup.py
-
-# Private data and model artifacts
-data/
-models/churn/
-
